@@ -1,0 +1,53 @@
+#!/bin/bash
+#SBATCH --job-name=hw1-finaleval
+#SBATCH --partition=gpu
+#SBATCH --ntasks=1
+#SBATCH --gpus-per-task=a40:1
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=32G
+#SBATCH --time=02:00:00
+
+set -eo pipefail
+source ~/csci645env.sh
+module load ver/2506 gcc/14.3.0 ffmpeg/7.1.1
+export MUJOCO_GL=egl WANDB_MODE=offline PYTHONUNBUFFERED=1
+export PYTHONDONTWRITEBYTECODE=1
+BASE="$CSCI645/csci645-mjlab160"
+cd "$BASE"
+export PYTHONPATH="$BASE/src"
+PYTHON="$BASE/.venv/bin/python"
+RESULTS="$CSCI645/evaluation/final-comparison-$SLURM_JOB_ID"
+mkdir -p "$RESULTS"
+cp "$CSCI645/evaluate_policy.py" "$RESULTS/evaluate_policy.py"
+cp "$CSCI645/final-comparison.job" "$RESULTS/submitted.job"
+
+BASE_CHECKPOINT="$BASE/logs/rsl_rl/leap_left_hand_cube_rotate/2026-09-28_01-39-33_baseline_mjlab160_seed0/model_4999.pt"
+A_CHECKPOINT="$CSCI645/experiments/modA-tilt/logs/rsl_rl/leap_left_hand_cube_rotate/2026-09-29_01-42-31_modA-tilt_seed0/model_4999.pt"
+D_CHECKPOINT="$CSCI645/experiments/modD-entropy/logs/rsl_rl/leap_left_hand_cube_rotate/2026-09-29_02-05-46_modD-entropy_seed0/model_4999.pt"
+for CHECKPOINT in "$BASE_CHECKPOINT" "$A_CHECKPOINT" "$D_CHECKPOINT"; do
+  test -s "$CHECKPOINT"
+done
+
+# All checkpoints use the same baseline evaluation environment and model architecture.
+# Fresh evaluation seeds; no training, tuning, or checkpoint changes.
+for POLICY in baseline modA-tilt modD-entropy; do
+  case "$POLICY" in
+    baseline) CHECKPOINT="$BASE_CHECKPOINT" ;;
+    modA-tilt) CHECKPOINT="$A_CHECKPOINT" ;;
+    modD-entropy) CHECKPOINT="$D_CHECKPOINT" ;;
+  esac
+  for SEED in 200 201 202; do
+    for MODE in deterministic sampled; do
+      VIDEO=()
+      if [ "$SEED" = 200 ] && [ "$MODE" = deterministic ]; then
+        VIDEO=(--video)
+      fi
+      "$PYTHON" -B -u "$RESULTS/evaluate_policy.py" \
+        --repo "$BASE" --checkpoint "$CHECKPOINT" \
+        --episodes 100 --seed "$SEED" --mass standard --mode "$MODE" \
+        "${VIDEO[@]}" \
+        --output "$RESULTS/$POLICY/seed-$SEED-$MODE"
+    done
+  done
+done
+echo "FINAL COMPARISON COMPLETE: $RESULTS"

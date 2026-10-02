@@ -1,0 +1,99 @@
+{
+  "protocol": {
+    "purpose": "baseline diagnosis before choosing modifications",
+    "task": "Mjlab-Leap-Left-HandCube-Rotate",
+    "checkpoint": "/project2/seita_1951/jichkar/csci645/csci645-mjlab160/logs/rsl_rl/leap_left_hand_cube_rotate/2026-09-28_01-39-33_baseline_mjlab160_seed0/model_4999.pt",
+    "checkpoint_sha256": "93fc4d1a18af4e3cc35a70c9088a5c1d8bee0f542aa5c5e3281e65a2542e995a",
+    "script_sha256": "b1ba713496a004167ac01dafcecdd36fa1e57875874c5cdd7475aeeb3d9ac03a",
+    "episodes": 100,
+    "seed": 200,
+    "mode": "deterministic",
+    "episode_horizon_s": 20.0,
+    "mass_multiplier_range": [
+      0.7,
+      1.4
+    ],
+    "actor_noise": true,
+    "other_randomization": "baseline defaults",
+    "curriculum": "disabled during evaluation only",
+    "aggregation": "one first complete episode per environment; equal episode weighting",
+    "video_selection": "environment 0 first episode, selected before observation of results",
+    "rotation_progress": "repository MetricsManager score, dimensionless, not rotations",
+    "signed_yaw_rad": "negative sum of wrapped yaw differences from post-forward poses",
+    "effort": "control-step samples; torque squared summed over actuators; absolute joint power summed over joints",
+    "failure": "any non-timeout termination, including simultaneous timeout and failure",
+    "mass_stress": "endpoints of the baseline training range, not unseen masses",
+    "control_step_s": 0.05
+  },
+  "summary": {
+    "episodes": 100,
+    "duration_s": {
+      "mean": 19.8145,
+      "std_across_episodes": 1.4709698408625762
+    },
+    "rotation_progress": {
+      "mean": 0.18215761816037274,
+      "std_across_episodes": 0.08322727510560401
+    },
+    "position_error_m": {
+      "mean": 0.011745372517030069,
+      "std_across_episodes": 0.0037453887684036702
+    },
+    "tilt_error_rad": {
+      "mean": 0.17237056738322717,
+      "std_across_episodes": 0.0561471757240591
+    },
+    "linear_speed_m_s": {
+      "mean": 0.021507421233250733,
+      "std_across_episodes": 0.007647856536818871
+    },
+    "contact_fraction": {
+      "mean": 0.2575612479669287,
+      "std_across_episodes": 0.04425094693490987
+    },
+    "signed_yaw_rad": {
+      "mean": 6.969660356044769,
+      "std_across_episodes": 1.0653815573762577
+    },
+    "mean_torque_squared_Nm2": {
+      "mean": 0.06251283755125345,
+      "std_across_episodes": 0.009891704343452651
+    },
+    "mean_abs_joint_power_W": {
+      "mean": 0.24099350165555586,
+      "std_across_episodes": 0.020591147105828028
+    },
+    "sampled_abs_work_J": {
+      "mean": 4.759498666763306,
+      "std_across_episodes": 0.45028098264357275
+    },
+    "action_clip_fraction": {
+      "mean": 0.9092959986615614,
+      "std_across_episodes": 0.009269477228871134
+    },
+    "failed": {
+      "count": 2,
+      "fraction": 0.02
+    },
+    "cube_fell": {
+      "count": 0,
+      "fraction": 0.0
+    },
+    "cube_pose_deviation": {
+      "count": 2,
+      "fraction": 0.02
+    },
+    "cube_too_fast": {
+      "count": 0,
+      "fraction": 0.0
+    },
+    "nan": {
+      "count": 0,
+      "fraction": 0.0
+    },
+    "time_out": {
+      "count": 98,
+      "fraction": 0.98
+    }
+  }
+}
